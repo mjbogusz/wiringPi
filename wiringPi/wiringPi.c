@@ -1662,6 +1662,8 @@ void piBoardId (int *model, int *rev, int *mem, int *maker, int *warranty)
     else if (strcmp (c, "000a") == 0) { *model = PI_MODEL_ODROIDC ; *rev = PI_VERSION_1 ; *mem = 2 ; *maker = PI_MAKER_HARDKERNEL ; }
     else if (strcmp (c, "0100") == 0) { *model = PI_MODEL_ODROIDXU_34; *rev = PI_VERSION_1 ; *mem = 3 ; *maker = PI_MAKER_HARDKERNEL ; }
     else if (strncmp (c, "02", 2) == 0) { *model = PI_MODEL_ODROIDC2 ; *mem = 3;  *maker = PI_MAKER_HARDKERNEL ;
+      int fd = 0;
+      char buf[2];
       if ((fd = open ("/sys/class/odroid/boardrev", O_RDONLY)) < 0) {
         printf ("ERROR : file not found.(boardrev)\n");
         *rev = 1;

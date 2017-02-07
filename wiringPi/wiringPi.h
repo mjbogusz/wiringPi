@@ -88,6 +88,7 @@
 #define	PI_MODEL_3		8
 #define	PI_MODEL_ZERO		9
 
+#define PI_MODEL_UNKNOWN 12
 #define PI_MODEL_ODROIDC  13
 #define PI_MODEL_ODROIDXU_34    14
 #define PI_MODEL_ODROIDC2 15
