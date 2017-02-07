@@ -52,6 +52,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <asm/ioctl.h>
 
 #include "wiringPi.h"
 #include "wiringPiI2C.h"
@@ -68,7 +69,7 @@
 
 #define I2C_SMBUS_QUICK		    0
 #define I2C_SMBUS_BYTE		    1
-#define I2C_SMBUS_BYTE_DATA	    2 
+#define I2C_SMBUS_BYTE_DATA	    2
 #define I2C_SMBUS_WORD_DATA	    3
 #define I2C_SMBUS_PROC_CALL	    4
 #define I2C_SMBUS_BLOCK_DATA	    5
@@ -78,7 +79,7 @@
 
 // SMBus messages
 
-#define I2C_SMBUS_BLOCK_MAX	32	/* As specified in SMBus standard */	
+#define I2C_SMBUS_BLOCK_MAX	32	/* As specified in SMBus standard */
 #define I2C_SMBUS_I2C_BLOCK_MAX	32	/* Not specified but we use same structure */
 
 // Structures used in the ioctl() calls
@@ -223,12 +224,13 @@ int wiringPiI2CSetup (const int devId)
 
   piBoardId (&model, &rev, &mem, &maker, &overVolted) ;
 
-  if      ( model == PI_MODEL_ODROIDC || model == PI_MODEL_ODROIDC2 )
+  /**/ if (model == PI_MODEL_ODROIDC || model == PI_MODEL_ODROIDC2)
     device = "/dev/i2c-1" ;
-  else if ( model == PI_MODEL_ODROIDXU_34 )
-    device = "/dev/i2c-4" ;	/* update 2016/feb/12 Linux */
-  else  {
-    rev = piBoardRev () ;
+  else if (model == PI_MODEL_ODROIDXU_34)
+    device = "/dev/i2c-4" ; /* update 2016/feb/12 Linux */
+  else
+  {
+    rev = piGpioLayout () ;
 
     if (rev == 1)
       device = "/dev/i2c-0" ;

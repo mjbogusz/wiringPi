@@ -1,8 +1,8 @@
 /*
- * extensions.h:
- *	Part of the GPIO program to test, peek, poke and otherwise
- *	noodle with the GPIO hardware on the Raspberry Pi.
- *	Copyright (c) 2012-2013 Gordon Henderson
+ * scrollPhat.h:
+ *	Simple driver for the Pimoroni Scroll Phat device
+ *
+ * Copyright (c) 2015 Gordon Henderson.
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -22,5 +22,18 @@
  ***********************************************************************
  */
 
+extern void scrollPhatPoint      (int x, int y, int colour) ;
+extern void scrollPhatLine       (int x0, int y0, int x1, int y1, int colour) ;
+extern void scrollPhatLineTo     (int x, int y, int colour) ;
+extern void scrollPhatRectangle  (int x1, int y1, int x2, int y2, int colour, int filled) ;
+extern void scrollPhatUpdate     (void) ;
+extern void scrollPhatClear      (void) ;
 
-extern int doExtension (char *progName, char *extensionData) ;
+extern int  scrollPhatPutchar    (int c) ;
+//extern void scrollPhatPutchar    (int c) ;
+extern void scrollPhatPuts       (const char *str) ;
+extern void scrollPhatPrintf     (const char *message, ...) ;
+extern void scrollPhatPrintSpeed (const int cps10) ;
+
+extern void scrollPhatIntensity  (const int percent) ;
+extern int  scrollPhatSetup      (void) ;
