@@ -2,9 +2,7 @@ cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
 project(libwiringPiDev)
 
-set (LIB_VERSION_MAJOR 2)
-set (LIB_VERSION_MINOR 0)
-set (LIB_VERSION ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR})
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_GNU_SOURCE")
 
 set (libwiringPiDev_source_files
 	ds1302.c
@@ -14,6 +12,7 @@ set (libwiringPiDev_source_files
 	piFace.c
 	lcd128x64.c
 	lcd.c
+  scrollPhat.c
 	piGlow.c
 )
 
