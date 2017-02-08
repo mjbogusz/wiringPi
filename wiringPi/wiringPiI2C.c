@@ -59,23 +59,24 @@
 
 // I2C definitions
 
-#define I2C_SLAVE	0x0703
-#define I2C_SMBUS	0x0720	/* SMBus-level access */
+#define I2C_SLAVE 0x0703
+#define I2C_SMBUS 0x0720 // SMBus-level access
 
-#define I2C_SMBUS_READ	1
+#define I2C_SMBUS_READ 1
 #define I2C_SMBUS_WRITE	0
 
 // SMBus transaction types
 
-#define I2C_SMBUS_QUICK		    0
-#define I2C_SMBUS_BYTE		    1
-#define I2C_SMBUS_BYTE_DATA	    2
-#define I2C_SMBUS_WORD_DATA	    3
-#define I2C_SMBUS_PROC_CALL	    4
-#define I2C_SMBUS_BLOCK_DATA	    5
-#define I2C_SMBUS_I2C_BLOCK_BROKEN  6
-#define I2C_SMBUS_BLOCK_PROC_CALL   7		/* SMBus 2.0 */
-#define I2C_SMBUS_I2C_BLOCK_DATA    8
+#define I2C_SMBUS_QUICK 0
+#define I2C_SMBUS_BYTE 1
+#define I2C_SMBUS_BYTE_DATA 2
+#define I2C_SMBUS_WORD_DATA 3
+#define I2C_SMBUS_DWORD_DATA 5
+#define I2C_SMBUS_PROC_CALL 4
+#define I2C_SMBUS_BLOCK_DATA 5
+#define I2C_SMBUS_I2C_BLOCK_BROKEN 6
+#define I2C_SMBUS_BLOCK_PROC_CALL 7 // SMBus 2.0
+#define I2C_SMBUS_I2C_BLOCK_DATA 8
 
 // SMBus messages
 
@@ -154,6 +155,16 @@ int wiringPiI2CReadReg16 (int fd, int reg)
     return data.word & 0xFFFF ;
 }
 
+int wiringPiI2CReadReg32 (int fd, int reg)
+{
+  union i2c_smbus_data data;
+
+  if (i2c_smbus_access (fd, I2C_SMBUS_READ, reg, I2C_SMBUS_DWORD_DATA, &data))
+    return -1 ;
+  else
+    return data.block[4] << 24 | data.block[3] << 16 | data.block[2] << 8 | data.block[1] ;
+}
+
 
 /*
  * wiringPiI2CWrite:
@@ -187,6 +198,18 @@ int wiringPiI2CWriteReg16 (int fd, int reg, int value)
 
   data.word = value ;
   return i2c_smbus_access (fd, I2C_SMBUS_WRITE, reg, I2C_SMBUS_WORD_DATA, &data) ;
+}
+
+int wiringPiI2CWriteReg32 (int fd, int reg, int value)
+{
+  union i2c_smbus_data data ;
+
+  data.block[0] = 4;
+  data.block[1] = value & 0xFF;
+  data.block[2] = (value >> 8) & 0xFF;
+  data.block[3] = (value >> 16) & 0xFF;
+  data.block[4] = (value >> 24) & 0xFF;
+  return i2c_smbus_access (fd, I2C_SMBUS_WRITE, reg, I2C_SMBUS_DWORD_DATA, &data) ;
 }
 
 
