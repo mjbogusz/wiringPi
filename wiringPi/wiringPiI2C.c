@@ -159,15 +159,12 @@ int wiringPiI2CReadRegBlock (int fd, int reg, int* values, int count)
 {
   union i2c_smbus_data data ;
 
-  if (i2c_smbus_access (fd, I2C_SMBUS_READ, reg, count+2, &data))
+  if (i2c_smbus_access (fd, I2C_SMBUS_READ, reg, count, &data))
     return -1 ;
   else
   {
-    if (data.block[0] < count)
-      count = data.block[0];
-
     for (int i = 0; i < count; ++i)
-      values[i] = data.block[i+1];
+      values[i] = data.block[i];
 
     return count;
   }
@@ -215,6 +212,7 @@ int wiringPiI2CWriteRegBlock (int fd, int reg, int* values, int count)
   data.block[0] = count;
   for (int i = 1; i <= count; ++i)
   	data.block[i] = values[i-1];
+  data.block[count+1] = 0;
   return i2c_smbus_access (fd, I2C_SMBUS_WRITE, reg, count+2, &data) ;
 }
 
