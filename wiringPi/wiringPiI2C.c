@@ -155,16 +155,6 @@ int wiringPiI2CReadReg16 (int fd, int reg)
     return data.word & 0xFFFF ;
 }
 
-int wiringPiI2CReadReg32 (int fd, int reg)
-{
-  union i2c_smbus_data data;
-
-  if (i2c_smbus_access (fd, I2C_SMBUS_READ, reg, I2C_SMBUS_DWORD_DATA, &data))
-    return -1 ;
-  else
-    return data.block[1] << 24 | data.block[2] << 16 | data.block[3] << 8 | data.block[4] ;
-}
-
 int wiringPiI2CReadRegBlock (int fd, int reg, int* values, int count)
 {
   union i2c_smbus_data data ;
@@ -216,18 +206,6 @@ int wiringPiI2CWriteReg16 (int fd, int reg, int value)
 
   data.word = value ;
   return i2c_smbus_access (fd, I2C_SMBUS_WRITE, reg, I2C_SMBUS_WORD_DATA, &data) ;
-}
-
-int wiringPiI2CWriteReg32 (int fd, int reg, int value)
-{
-  union i2c_smbus_data data ;
-
-  data.block[0] = 4;
-  data.block[1] = (value >> 24) & 0xFF;
-  data.block[2] = (value >> 16) & 0xFF;
-  data.block[3] = (value >> 8) & 0xFF;
-  data.block[4] = value & 0xFF;
-  return i2c_smbus_access (fd, I2C_SMBUS_WRITE, reg, I2C_SMBUS_DWORD_DATA, &data) ;
 }
 
 int wiringPiI2CWriteRegBlock (int fd, int reg, int* values, int count)
