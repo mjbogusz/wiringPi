@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8.8 FATAL_ERROR)
 
 project(WiringPi)
 
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Wformat=2 -Wall -Winline -Wextra -fPIC")
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 -O2 -Wformat=2 -Wall -Winline -Wextra -fPIC")
 
 set (LIB_VERSION_MAJOR 2)
 set (LIB_VERSION_MINOR 36)
