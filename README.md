@@ -26,6 +26,11 @@ _for now, use regular `Makefile` or `build.sh`, manually copy compiled files to 
 ## API, examples...
 See [official webpage](http://wiringpi.com/)
 
+## Pin mappings
+* [Odroid C1](http://odroid.com/dokuwiki/doku.php?id=en:c1_hardware#expansion_connectors) ('Description' column)
+* [Odroid C2](http://odroid.com/dokuwiki/doku.php?id=en:c2_hardware#expansion_connectors) ('Description' column)
+* [Odroid XU3 & XU4](http://odroid.com/dokuwiki/doku.php?id=en:xu3_hardware_gpio#gpio_map_for_wiringpi_library_con10_2_x_15) ('WiringPI GPIO' column)
+
 ---
 Original readme follows.
 ---
