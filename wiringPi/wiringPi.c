@@ -69,6 +69,7 @@
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <asm/ioctl.h>
+#include <linux/version.h>
 
 #include "softPwm.h"
 #include "softTone.h"
@@ -729,8 +730,13 @@ static int adcFds [2] = {
 #define GPIO_B3_PUD_OFFSET  0x00C8
 #define GPIO_B3_END         214
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0)
+#define piAinNode0_xu   "/sys/devices/platform/soc:/12d10000.adc:/iio:device0/in_voltage0_raw"
+#define piAinNode1_xu   "/sys/devices/platform/soc:/12d10000.adc:/iio:device0/in_voltage3_raw"
+#else
 #define piAinNode0_xu   "/sys/devices/12d10000.adc/iio:device0/in_voltage0_raw"
 #define piAinNode1_xu   "/sys/devices/12d10000.adc/iio:device0/in_voltage3_raw"
+#endif
 
 static int  piModel = PI_MODEL_UNKNOWN;
 
