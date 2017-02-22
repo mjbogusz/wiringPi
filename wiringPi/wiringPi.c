@@ -1355,7 +1355,7 @@ int piGpioLayout (void)
 //  I do not support so don't email me your bleating whinges about anything
 //  other than a genuine Raspberry Pi.
 
-  if (! (strstr (line, "BCM2708") || strstr (line, "BCM2709") || strstr (line, "BCM2835")))
+  if (! (strstr (line, "BCM2708") || strstr (line, "BCM2709") || strstr (line, "BCM2835") || strncmp (line, "ODROID", 6)))
   {
     fprintf (stderr, "Unable to determine hardware version. I see: %s,\n", line) ;
     fprintf (stderr, " - expecting BCM2708, BCM2709 or BCM2835.\n") ;
