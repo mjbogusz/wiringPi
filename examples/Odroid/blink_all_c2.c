@@ -26,14 +26,30 @@
 #include <stdio.h>
 #include <wiringPi.h>
 
+// Uncomment for GPIO mode (/sys/class/gpio/gpioXXX numbering)
+//#define GPIO_MODE
+
 int main() {
   printf("Odroid C2 blink all\n");
 
-  wiringPiSetupGpio();
-  int pins[19] = {07, 00, 01, 02, 03,
-                  04, 05, 12, 13, 06,
-                  14, 10, 11, 21, 22,
-                  26, 23, 24, 27};
+  #ifndef GPIO_MODE
+    wiringPiSetup();
+    int pins[19] = {
+      00, 01, 02, 03, 04,
+      05, 06, 07, 10, 11,
+      12, 13, 14, 21, 22,
+      23, 24, 26, 27
+    };
+  #else
+    // GPIO mode
+    wiringPiSetupGpio();
+    int pins[19] = {
+      247, 238, 239, 237, 236,
+      233, 231, 249, 229, 225,
+      235, 232, 230, 228, 219,
+      234, 214, 224, 218,
+    };
+  #endif
 
   for (int i = 0; i < 19; ++i) {
     pinMode(pins[i], OUTPUT);
