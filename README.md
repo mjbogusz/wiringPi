@@ -9,14 +9,33 @@ This one combines:
 * Odroid boards support (merged from Hardkernel's fork and believe me, it was a PITA)
 * CMake build system (instead of awful hard-typed Makefiles)
 
-## Building
+## Compiling
 ```
 cd build
 cmake ..
 make
 ```
 
-_todo: elaborate_
+## Examples
+Examples are in 'examples' directory.
+Most of them are from original (i.e. non-fork) version of the library.
+
+### Building
+```
+cd build
+cmake ..
+make examples
+```
+
+### Odroid specific examples
+Currently there is 1 example program made specifically for Odroid C2. It _should_ blink LEDs connected to all GPIO pins in order of WiringPi mapping (see [Pin mappings](#pin-mappings) or source code).
+You can build and run it with:
+```
+cd build
+cmake ..
+make examples_odroid
+./examples/Odroid/blink_all_c2
+```
 
 ## Installation
 _todo (missing cmake rules)_
@@ -32,7 +51,7 @@ See [official webpage](http://wiringpi.com/)
 * [Odroid XU3 & XU4](http://odroid.com/dokuwiki/doku.php?id=en:xu3_hardware_gpio#gpio_map_for_wiringpi_library_con10_2_x_15) ('WiringPI GPIO' column)
 
 ---
-Original readme follows.
+Original readme below
 ---
 
 wiringPi README
