@@ -30,19 +30,19 @@ int main() {
   printf("Odroid C2 blink all\n");
 
   wiringPiSetupGpio();
-  int pins[18] = {00, 01, 02, 03, 04,
-                  05, 12, 13, 06, 14,
-                  10, 11, 21, 22, 26,
-                  23, 24, 27};
+  int pins[19] = {07, 00, 01, 02, 03,
+                  04, 05, 12, 13, 06,
+                  14, 10, 11, 21, 22,
+                  26, 23, 24, 27};
 
-  for (int i = 0; i < 18; ++i) {
+  for (int i = 0; i < 19; ++i) {
     pinMode(pins[i], OUTPUT);
     digitalWrite(pins[i], LOW);
   }
 
   while(1) {
-    for (int i = 0; i < 18; ++i) {
-      digitalWrite(pins[(i+1) % 18], HIGH);
+    for (int i = 0; i < 19; ++i) {
+      digitalWrite(pins[(i+1) % 19], HIGH);
       digitalWrite(pins[i], LOW);
       delay(500);
     }
