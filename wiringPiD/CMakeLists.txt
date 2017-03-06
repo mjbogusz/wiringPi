@@ -20,3 +20,7 @@ set (wiringPiD_link_libraries
 add_executable (wiringpid ${wiringPiD_source_files})
 target_link_libraries (wiringpid LINK_PUBLIC ${wiringPiD_link_libraries})
 target_include_directories (wiringpid PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../wiringPi ${CMAKE_CURRENT_SOURCE_DIR}/../devLib)
+
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/wiringpid
+  DESTINATION sbin
+)

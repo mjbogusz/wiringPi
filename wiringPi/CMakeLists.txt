@@ -39,8 +39,19 @@ set (libwiringPi_source_files
   wiringShift.c
   wpiExtensions.c
 )
+FILE(GLOB libwiringPi_header_files "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
 add_library (wiringPi SHARED ${libwiringPi_source_files})
 set_target_properties(wiringPi PROPERTIES VERSION ${LIB_VERSION} SOVERSION ${LIB_VERSION_MAJOR})
 target_link_libraries (wiringPi LINK_PUBLIC pthread m rt crypt)
 target_include_directories (wiringPi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+install(TARGETS wiringPi
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
+install(FILES
+  ${libwiringPi_header_files}
+  DESTINATION include/wiringPi
+)
