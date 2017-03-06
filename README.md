@@ -10,7 +10,7 @@ This one combines:
 * CMake build system (instead of awful hard-typed Makefiles)
 
 ## Compiling
-```
+```sh
 cd build
 cmake ..
 make
@@ -21,7 +21,7 @@ Examples are in 'examples' directory.
 Most of them are from original (i.e. non-fork) version of the library.
 
 ### Building
-```
+```sh
 cd build
 cmake ..
 make examples
@@ -30,7 +30,7 @@ make examples
 ### Odroid specific examples
 Currently there is 1 example program made specifically for Odroid C2. It _should_ blink LEDs connected to all GPIO pins in order of WiringPi mapping (see [Pin mappings](#pin-mappings) or source code).
 You can build and run it with:
-```
+```sh
 cd build
 cmake ..
 make examples_odroid
@@ -38,9 +38,16 @@ make examples_odroid
 ```
 
 ## Installation
-_todo (missing cmake rules)_
+__Warning: this has not been properly tested yet__
+```sh
+cd build
+cmake ..
+make install
+```
 
-_for now, use regular `Makefile` or `build.sh`, manually copy compiled files to their destinations ( `*.so*` to `/usr/local/lib` and `*.h` to `/usr/local/include`) or just use this library in an userspace manner._
+Note: original WiringPi spams `/usr/include` with headers (about 30-40 of them). This fork _(will)_ install them into `/usr/include/wiringPi`
+
+_TODO: .deb package generation_
 
 ## API, examples...
 See [official webpage](http://wiringpi.com/)
