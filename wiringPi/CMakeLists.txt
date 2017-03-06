@@ -7,6 +7,7 @@ set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_GNU_SOURCE")
 set (libwiringPi_source_files
   ads1115.c
   bmp180.c
+  drcNet.c
   drcSerial.c
   ds18b20.c
   htu21d.c
@@ -26,6 +27,7 @@ set (libwiringPi_source_files
   piHiPri.c
   piThread.c
   pseudoPins.c
+  rht03.c
   sn3218.c
   softPwm.c
   softTone.c
@@ -40,5 +42,5 @@ set (libwiringPi_source_files
 
 add_library (wiringPi SHARED ${libwiringPi_source_files})
 set_target_properties(wiringPi PROPERTIES VERSION ${LIB_VERSION} SOVERSION ${LIB_VERSION_MAJOR})
-target_link_libraries (wiringPi LINK_PUBLIC pthread m rt)
+target_link_libraries (wiringPi LINK_PUBLIC pthread m rt crypt)
 target_include_directories (wiringPi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
