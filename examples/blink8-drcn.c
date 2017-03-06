@@ -1,7 +1,9 @@
 /*
- * pins.c:
- *	Just display a handy Pi pinnout diagram.
- *	Copyright (c) 2012-2017 Gordon Henderson
+ * blink8-drcn.c:
+ *	Simple sequence over the first 8 GPIO pins - LEDs
+ *	Aimed at the Ladder board, but it's fairly generic.
+ *
+ * Copyright (c) 2012-2013 Gordon Henderson. <projects@drogon.net>
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -21,13 +23,39 @@
  ***********************************************************************
  */
 
-
 #include <stdio.h>
+#include <wiringPi.h>
+#include <drcNet.h>
 
-void doPins (void)
+int main (void)
 {
-  printf ("The pins command has been deprecated - sorry. Please use the\n") ;
-  printf ("  gpio readall\n") ;
-  printf ("command to get a list of the pinnouts for your Pi.\n") ;
-}
+  int i, led ;
 
+  printf ("Raspberry Pi - 8-LED Sequencer\n") ;
+  printf ("==============================\n") ;
+  printf ("\n") ;
+  printf ("Connect LEDs to the first 8 GPIO pins and watch ...\n") ;
+
+  int pinBase = 100 ;
+
+//  wiringPiSetup () ;
+  drcSetupNet (pinBase, 100, "192.168.254.21", "6124", "123456") ;
+
+  for (i = 0 ; i < 8 ; ++i)
+    pinMode (i + pinBase, OUTPUT) ;
+
+  for (;;)
+  {
+    for (led = 0 ; led < 8 ; ++led)
+    {
+      digitalWrite (led + pinBase, 1) ;
+      delay (10) ;
+    }
+
+    for (led = 0 ; led < 8 ; ++led)
+    {
+      digitalWrite (led + pinBase, 0) ;
+      delay (10) ;
+    }
+  }
+}

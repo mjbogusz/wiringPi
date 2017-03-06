@@ -1,7 +1,7 @@
 /*
  * readall.c:
  *	The readall functions - getting a bit big, so split them out.
- *	Copyright (c) 2012-2015 Gordon Henderson
+ *	Copyright (c) 2012-2017 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -418,6 +418,8 @@ static void plus2header (int model)
     printf (" +-----+-----+---------+------+---+--B Plus--+---+------+---------+-----+-----+\n") ;
   else if (model == PI_MODEL_ZERO)
     printf (" +-----+-----+---------+------+---+-Pi Zero--+---+------+---------+-----+-----+\n") ;
+  else if (model == PI_MODEL_ZERO_W)
+    printf (" +-----+-----+---------+------+---+-Pi ZeroW-+---+------+---------+-----+-----+\n") ;
   else if (model == PI_MODEL_2)
     printf (" +-----+-----+---------+------+---+---Pi 2---+---+------+---------+-----+-----+\n") ;
   else if (model == PI_MODEL_3)
@@ -642,13 +644,13 @@ void doReadall (void)
 
   /**/ if ((model == PI_MODEL_A) || (model == PI_MODEL_B))
     abReadall (model, rev) ;
-  else if ((model == PI_MODEL_BP) || (model == PI_MODEL_AP) || (model == PI_MODEL_2) || (model == PI_MODEL_3) || (model == PI_MODEL_ZERO))
+  else if ((model == PI_MODEL_BP) || (model == PI_MODEL_AP) || (model == PI_MODEL_2) || (model == PI_MODEL_3) || (model == PI_MODEL_ZERO) || (model == PI_MODEL_ZERO_W))
     piPlusReadall (model) ;
   else if (model == PI_MODEL_ODROIDC || model == PI_MODEL_ODROIDC2)
     ReadallOdroidC (model, rev);
   else if (model == PI_MODEL_ODROIDXU_34)
     ReadallOdroidXU();
-  else if (model == PI_MODEL_CM)
+  else if ((model == PI_MODEL_CM) || (model == PI_MODEL_CM3))
     allReadall () ;
   else
     printf ("Oops - unable to determine board type... model: %d\n", model) ;

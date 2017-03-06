@@ -1,6 +1,7 @@
 /*
- * pins.c:
- *	Just display a handy Pi pinnout diagram.
+ * runRemote.h:
+ *	Run the remote commands passed over the network link.
+ *
  *	Copyright (c) 2012-2017 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
@@ -21,13 +22,8 @@
  ***********************************************************************
  */
 
+// Globals
 
-#include <stdio.h>
+extern int noLocalPins ;
 
-void doPins (void)
-{
-  printf ("The pins command has been deprecated - sorry. Please use the\n") ;
-  printf ("  gpio readall\n") ;
-  printf ("command to get a list of the pinnouts for your Pi.\n") ;
-}
-
+extern void runRemoteCommands (int fd) ;

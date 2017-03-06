@@ -1,6 +1,6 @@
 /*
- * pins.c:
- *	Just display a handy Pi pinnout diagram.
+ * network.h:
+ *	Part of wiringPiD
  *	Copyright (c) 2012-2017 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
@@ -21,13 +21,11 @@
  ***********************************************************************
  */
 
-
-#include <stdio.h>
-
-void doPins (void)
-{
-  printf ("The pins command has been deprecated - sorry. Please use the\n") ;
-  printf ("  gpio readall\n") ;
-  printf ("command to get a list of the pinnouts for your Pi.\n") ;
-}
-
+extern char *getClientIP   (void) ;
+extern int   getResponce   (int clientFd) ;
+extern int   setupServer   (int serverPort) ;
+extern int   sendGreeting  (int clientFd) ;
+extern int   sendChallenge (int clientFd) ;
+extern int   getResponse   (int clientFd) ;
+extern int   passwordMatch (const char *password) ;
+extern void  closeServer   (int clientFd) ;

@@ -1,8 +1,10 @@
 /*
  * wiringPi:
- *  Arduino look-a-like Wiring library for the Raspberry Pi
- *  Copyright (c) 2012-2015 Gordon Henderson
- *  Additional code for pwmSetClock by Chris Hall <chris@kchall.plus.com>
+ *	Arduino look-a-like Wiring library for the Raspberry Pi
+ *	Copyright (c) 2012-2017 Gordon Henderson
+ *	Additional code for pwmSetClock by Chris Hall <chris@kchall.plus.com>
+ *  Odroid boards support by Hardkernel
+ *  Update to mainstream and minor patches: MJBogusz
  *
  *  Thanks to code samples from Gert Jan van Loo and the
  *  BCM2835 ARM Peripherals manual, however it's missing
@@ -75,6 +77,7 @@
 #include "softTone.h"
 
 #include "wiringPi.h"
+#include "../version.h"
 
 // Environment Variables
 
@@ -87,6 +90,9 @@
 //  The others are available for the other devices
 
 #define PI_GPIO_MASK  (0xFFFFFFC0)
+
+// Extend wiringPi with other pin-based devices and keep track of
+//	them in this structure
 
 struct wiringPiNodeStruct *wiringPiNodes = NULL ;
 
@@ -196,11 +202,6 @@ static volatile uint32_t *timer ;
 static volatile uint32_t *timerIrqRaw ;
 #endif
 
-// GCC warning suppressor
-
-#define UNU __attribute__((unused))
-
-
 // Data for use with the boardId functions.
 //  The order of entries here to correspond with the PI_MODEL_X
 //  and PI_VERSION_X defines in wiringPi.h
@@ -226,9 +227,9 @@ const char *piModelNames [16] =
   "Unknown07",  // 07
   "Pi 3", // 08
   "Pi Zero",  // 09
-  "Unknown10",  // 10
+  "CM3",  // 10
   "Unknown11",  // 11
-  "Unknown12",  // 12
+  "Pi Zero-W",  // 12
   "ODROID-C1/C1+",  // 13
   "ODROID-XU3/4", // 14
   "ODROID-C2",  // 15
@@ -1450,20 +1451,17 @@ int piGpioLayout (void)
   return gpioLayout ;
 }
 
-/***
-  if (strstr (line, "BCM2709") != NULL) // Pi v2 - no point doing anything more at this point
-  {
-    piModel2 = TRUE ;
-    fclose (cpuFd) ;
-    return gpioLayout = 2 ;
-  }
-  else if (strstr (line, "BCM2708") == NULL)
-  {
-  }
-***/
+/*
+ * piBoardRev:
+ *	Deprecated, but does the same as piGpioLayout
+ *********************************************************************************
+ */
 
-// Now do the rest of it as before - we just need to see if it's an older
-//  Rev 1 as anything else is rev 2.
+int piBoardRev (void)
+{
+  return piGpioLayout () ;
+}
+
 
 
 /*
@@ -1982,13 +1980,15 @@ struct wiringPiNodeStruct *wiringPiFindNode (int pin)
  *********************************************************************************
  */
 
-static void pinModeDummy             (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int mode)  { return ; }
-static void pullUpDnControlDummy     (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int pud)   { return ; }
-static int  digitalReadDummy         (UNU struct wiringPiNodeStruct *node, UNU int UNU pin)            { return LOW ; }
-static void digitalWriteDummy        (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int value) { return ; }
-static void pwmWriteDummy            (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int value) { return ; }
-static int  analogReadDummy          (UNU struct wiringPiNodeStruct *node, UNU int pin)            { return 0 ; }
-static void analogWriteDummy         (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int value) { return ; }
+static         void pinModeDummy             (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int mode)  { return ; }
+static         void pullUpDnControlDummy     (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int pud)   { return ; }
+static unsigned int digitalRead8Dummy        (UNU struct wiringPiNodeStruct *node, UNU int UNU pin)            { return 0 ; }
+static         void digitalWrite8Dummy       (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int value) { return ; }
+static          int digitalReadDummy         (UNU struct wiringPiNodeStruct *node, UNU int UNU pin)            { return LOW ; }
+static         void digitalWriteDummy        (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int value) { return ; }
+static         void pwmWriteDummy            (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int value) { return ; }
+static          int analogReadDummy          (UNU struct wiringPiNodeStruct *node, UNU int pin)            { return 0 ; }
+static         void analogWriteDummy         (UNU struct wiringPiNodeStruct *node, UNU int pin, UNU int value) { return ; }
 
 struct wiringPiNodeStruct *wiringPiNewNode (int pinBase, int numPins)
 {
@@ -2020,17 +2020,19 @@ struct wiringPiNodeStruct *wiringPiNewNode (int pinBase, int numPins)
   if (node == NULL)
     (void)wiringPiFailure (WPI_FATAL, "wiringPiNewNode: Unable to allocate memory: %s\n", strerror (errno)) ;
 
-  node->pinBase         = pinBase ;
-  node->pinMax          = pinBase + numPins - 1 ;
-  node->pinMode         = pinModeDummy ;
-  node->pullUpDnControl = pullUpDnControlDummy ;
-  node->digitalRead     = digitalReadDummy ;
-  node->digitalWrite    = digitalWriteDummy ;
-  node->pwmWrite        = pwmWriteDummy ;
-  node->analogRead      = analogReadDummy ;
-  node->analogWrite     = analogWriteDummy ;
-  node->next            = wiringPiNodes ;
-  wiringPiNodes         = node ;
+  node->pinBase          = pinBase ;
+  node->pinMax           = pinBase + numPins - 1 ;
+  node->pinMode          = pinModeDummy ;
+  node->pullUpDnControl  = pullUpDnControlDummy ;
+  node->digitalRead      = digitalReadDummy ;
+//node->digitalRead8     = digitalRead8Dummy ;
+  node->digitalWrite     = digitalWriteDummy ;
+//node->digitalWrite8    = digitalWrite8Dummy ;
+  node->pwmWrite         = pwmWriteDummy ;
+  node->analogRead       = analogReadDummy ;
+  node->analogWrite      = analogWriteDummy ;
+  node->next             = wiringPiNodes ;
+  wiringPiNodes          = node ;
 
   return node ;
 }
@@ -2405,6 +2407,27 @@ int digitalRead (int pin)
 
 
 /*
+ * digitalRead8:
+ *	Read 8-bits (a byte) from given start pin.
+ *********************************************************************************
+
+unsigned int digitalRead8 (int pin)
+{
+  struct wiringPiNodeStruct *node = wiringPiNodes ;
+
+  if ((pin & PI_GPIO_MASK) == 0)		// On-Board Pin
+    return 0 ;
+  else
+  {
+    if ((node = wiringPiFindNode (pin)) == NULL)
+      return LOW ;
+    return node->digitalRead8 (node, pin) ;
+  }
+}
+ */
+
+
+/*
  * digitalWrite:
  *  Set an output bit
  *********************************************************************************
@@ -2490,6 +2513,26 @@ void digitalWrite (int pin, int value)
         node->digitalWrite (node, pin, value) ;
   }
 }
+
+
+/*
+ * digitalWrite8:
+ *	Set an output 8-bit byte on the device from the given pin number
+ *********************************************************************************
+
+void digitalWrite8 (int pin, int value)
+{
+  struct wiringPiNodeStruct *node = wiringPiNodes ;
+
+  if ((pin & PI_GPIO_MASK) == 0)		// On-Board Pin
+    return ;
+  else
+  {
+    if ((node = wiringPiFindNode (pin)) != NULL)
+      node->digitalWrite8 (node, pin, value) ;
+  }
+}
+ */
 
 
 /*
@@ -3047,11 +3090,19 @@ int wiringPiISR (int pin, int mode, void (*function)(void))
 
 static void initialiseEpoch (void)
 {
+#ifdef	OLD_WAY
   struct timeval tv ;
 
   gettimeofday (&tv, NULL) ;
   epochMilli = (uint64_t)tv.tv_sec * (uint64_t)1000    + (uint64_t)(tv.tv_usec / 1000) ;
   epochMicro = (uint64_t)tv.tv_sec * (uint64_t)1000000 + (uint64_t)(tv.tv_usec) ;
+#else
+  struct timespec ts ;
+
+  clock_gettime (CLOCK_MONOTONIC_RAW, &ts) ;
+  epochMilli = (uint64_t)ts.tv_sec * (uint64_t)1000    + (uint64_t)(ts.tv_nsec / 1000000L) ;
+  epochMicro = (uint64_t)ts.tv_sec * (uint64_t)1000000 + (uint64_t)(ts.tv_nsec /    1000L) ;
+#endif
 }
 
 
@@ -3124,17 +3175,27 @@ void delayMicroseconds (unsigned int howLong)
 
 /*
  * millis:
- *  Return a number of milliseconds as an unsigned int.
+ *	Return a number of milliseconds as an unsigned int.
+ *	Wraps at 49 days.
  *********************************************************************************
  */
 
 unsigned int millis (void)
 {
-  struct timeval tv ;
   uint64_t now ;
+
+#ifdef	OLD_WAY
+  struct timeval tv ;
 
   gettimeofday (&tv, NULL) ;
   now  = (uint64_t)tv.tv_sec * (uint64_t)1000 + (uint64_t)(tv.tv_usec / 1000) ;
+
+#else
+  struct  timespec ts ;
+
+  clock_gettime (CLOCK_MONOTONIC_RAW, &ts) ;
+  now  = (uint64_t)ts.tv_sec * (uint64_t)1000 + (uint64_t)(ts.tv_nsec / 1000000L) ;
+#endif
 
   return (uint32_t)(now - epochMilli) ;
 }
@@ -3142,19 +3203,40 @@ unsigned int millis (void)
 
 /*
  * micros:
- *  Return a number of microseconds as an unsigned int.
+ *	Return a number of microseconds as an unsigned int.
+ *	Wraps after 71 minutes.
  *********************************************************************************
  */
 
 unsigned int micros (void)
 {
-  struct timeval tv ;
   uint64_t now ;
+#ifdef	OLD_WAY
+  struct timeval tv ;
 
   gettimeofday (&tv, NULL) ;
   now  = (uint64_t)tv.tv_sec * (uint64_t)1000000 + (uint64_t)tv.tv_usec ;
+#else
+  struct  timespec ts ;
+
+  clock_gettime (CLOCK_MONOTONIC_RAW, &ts) ;
+  now  = (uint64_t)ts.tv_sec * (uint64_t)1000000 + (uint64_t)(ts.tv_nsec / 1000) ;
+#endif
+
 
   return (uint32_t)(now - epochMicro) ;
+}
+
+/*
+ * wiringPiVersion:
+ *	Return our current version number
+ *********************************************************************************
+ */
+
+void wiringPiVersion (int *major, int *minor)
+{
+  *major = VERSION_MAJOR ;
+  *minor = VERSION_MINOR ;
 }
 
 
@@ -3201,7 +3283,7 @@ int wiringPiSetup (void)
 
   piBoardId (&model, &rev, &mem, &maker, &overVolted) ;
 
-  if (model == PI_MODEL_CM)
+  if ((model == PI_MODEL_CM) || (model == PI_MODEL_CM3))
     wiringPiMode = WPI_MODE_GPIO ;
   else
     wiringPiMode = WPI_MODE_PINS ;

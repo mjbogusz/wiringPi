@@ -2,7 +2,7 @@
  * gpio.c:
  *	Swiss-Army-Knife, Set-UID command-line interface to the Raspberry
  *	Pi's GPIO.
- *	Copyright (c) 2012-2015 Gordon Henderson
+ *	Copyright (c) 2012-2017 Gordon Henderson
  ***********************************************************************
  * This file is part of wiringPi:
  *	https://projects.drogon.net/raspberry-pi/wiringpi/
@@ -40,7 +40,7 @@
 #include <gertboard.h>
 #include <piFace.h>
 
-#include "version.h"
+#include "../version.h"
 
 extern int wiringPiDebug ;
 
@@ -65,7 +65,9 @@ int piModel = PI_MODEL_UNKNOWN;
 
 char *usage = "Usage: gpio -v\n"
               "       gpio -h\n"
-              "       gpio [-g|-1] [-x extension:params] ...\n"
+              "       gpio [-g|-1] ...\n"
+              "       gpio [-d] ...\n"
+              "       [-x extension:params] [[ -x ...]] ...\n"
               "       gpio [-p] <read/write/wb> ...\n"
               "       gpio <read/write/aread/awritewb/pwm/clock/mode> ...\n"
               "       gpio <toggle/blink> <pin>\n"
@@ -433,7 +435,7 @@ static void doUnLoad (int argc, char *argv [])
  *********************************************************************************
  */
 
-static void doI2Cdetect (int argc, char *argv [])
+static void doI2Cdetect (UNU int argc, char *argv [])
 {
   int port = piGpioLayout () == 1 ? 0 : 1 ;
   char *c, *command ;
@@ -464,7 +466,7 @@ static void doI2Cdetect (int argc, char *argv [])
  *********************************************************************************
  */
 
-static void doExports (int argc, char *argv [])
+static void doExports (UNU int argc, UNU char *argv [])
 {
   int fd ;
   int i, l, first ;
@@ -808,7 +810,7 @@ void doUnexportall (char *progName)
  *********************************************************************************
  */
 
-static void doReset (char *progName)
+static void doReset (UNU char *progName)
 {
   printf ("GPIO Reset is dangerous and has been removed from the gpio command.\n") ;
   printf (" - Please write a shell-script to reset the GPIO pins into the state\n") ;
@@ -1400,8 +1402,11 @@ static void doVersion (char *argv [])
   char name [80] ;
   FILE *fd ;
 
-  printf ("gpio version: %s\n", VERSION) ;
-  printf ("Copyright (c) 2012-2015 Gordon Henderson\n") ;
+  int vMaj, vMin ;
+
+  wiringPiVersion (&vMaj, &vMin) ;
+  printf ("gpio version: %d.%d\n", vMaj, vMin) ;
+  printf ("Copyright (c) 2012-2017 Gordon Henderson\n") ;
   printf ("This is free software with ABSOLUTELY NO WARRANTY.\n") ;
   printf ("For details type: %s -warranty\n", argv [0]) ;
   printf ("\n") ;
@@ -1487,7 +1492,7 @@ int main (int argc, char *argv [])
   if (strcasecmp (argv [1], "-warranty") == 0)
   {
     printf ("gpio version: %s\n", VERSION) ;
-    printf ("Copyright (c) 2012-2015 Gordon Henderson\n") ;
+    printf ("Copyright (c) 2012-2017 Gordon Henderson\n") ;
     printf ("\n") ;
     printf ("    This program is free software; you can redistribute it and/or modify\n") ;
     printf ("    it under the terms of the GNU Leser General Public License as published\n") ;
@@ -1578,6 +1583,16 @@ int main (int argc, char *argv [])
     wpMode = WPI_MODE_PIFACE ;
   }
 
+// Check for -z argument so we don't actually initialise wiringPi
+
+  else if (strcasecmp (argv [1], "-z") == 0)
+  {
+    for (i = 2 ; i < argc ; ++i)
+      argv [i - 1] = argv [i] ;
+    --argc ;
+    wpMode = WPI_MODE_UNINITIALISED ;
+  }
+
 // Default to wiringPi mode
 
   else
@@ -1587,17 +1602,25 @@ int main (int argc, char *argv [])
   }
 
 // Check for -x argument to load in a new extension
+//	-x extension:base:args
+//	Can load many modules, but unless daemon mode we can only send one
+//	command at a time.
 
-  if (strcasecmp (argv [1], "-x") == 0)
+  while (strcasecmp (argv [1], "-x") == 0)
   {
     if (argc < 3)
     {
-      fprintf (stderr, "%s: -x missing extension specification.\n", argv [0]) ;
+      fprintf (stderr, "%s: -x missing extension command.\n", argv [0]) ;
       exit (EXIT_FAILURE) ;
     }
 
-    if (!loadWPiExtension (argv [0], argv [2], TRUE))	// Prints its own error messages
+    if (!loadWPiExtension (argv [0], argv [2], TRUE))
+    {
+      fprintf (stderr, "%s: Extension load failed: %s\n", argv [0], strerror (errno)) ;
       exit (EXIT_FAILURE) ;
+    }
+
+// Shift args down by 2
 
     for (i = 3 ; i < argc ; ++i)
       argv [i - 2] = argv [i] ;
