@@ -38,16 +38,28 @@ make examples_odroid
 ```
 
 ## Installation
-__Warning: this has not been properly tested yet__
+Note: original WiringPi spams `/usr/include` with headers (about 30-40 of them). This fork installs them into `/usr/include/wiringPi` (but main `wiringPi.h` will be installed into `/usr/include` too for convenience)
+
+### Manual (not recommended)
 ```sh
 cd build
 cmake ..
-make install
+make
+sudo make install
 ```
 
-Note: original WiringPi spams `/usr/include` with headers (about 30-40 of them). This fork _(will)_ install them into `/usr/include/wiringPi`
+### Automatic (via package manager)
+#### Dpkg (Debian, Ubuntu and derivatives)
+```sh
+cd build
+cmake ..
+make
+cpack -G DEB
+sudo dpkg -i wiringpi-odroid-*.deb
+```
 
-_TODO: .deb package generation_
+#### Pacman (Archlinux)
+_TODO_
 
 ## API, examples...
 See [official webpage](http://wiringpi.com/)

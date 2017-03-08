@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.8.8 FATAL_ERROR)
 
-project(WiringPi)
+project (WiringPi)
+
+find_package (Threads REQUIRED)
 
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11 -O2 -Wformat=2 -Wall -Winline -Wextra -fPIC")
 set (CMAKE_INSTALL_PREFIX /usr/)
@@ -15,5 +17,4 @@ add_subdirectory (gpio)
 add_subdirectory (wiringPiD)
 add_subdirectory (examples)
 
-# For future CPack commands (from http://stackoverflow.com/questions/11944060/how-to-detect-target-architecture-using-cmake)
-# EXECUTE_PROCESS(COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE)
+include (CPack.cmake)
