@@ -40,6 +40,7 @@ set (libwiringPi_source_files
   wpiExtensions.c
 )
 FILE(GLOB libwiringPi_header_files "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+FILE(GLOB libwiringPi_main_header_files "${CMAKE_CURRENT_SOURCE_DIR}/wiring*.h")
 
 add_library (wiringPi SHARED ${libwiringPi_source_files})
 set_target_properties(wiringPi PROPERTIES VERSION ${LIB_VERSION} SOVERSION ${LIB_VERSION_MAJOR})
@@ -50,6 +51,10 @@ install(TARGETS wiringPi
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+)
+install(FILES
+  ${libwiringPi_main_header_files}
+  DESTINATION include
 )
 install(FILES
   ${libwiringPi_header_files}

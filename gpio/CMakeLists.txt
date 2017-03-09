@@ -22,7 +22,3 @@ target_include_directories (gpio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../wiringPi 
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/gpio
   DESTINATION bin
 )
-install(FILES
-  ${libwiringPi_header_files}
-  DESTINATION include/wiringPi
-)
