@@ -1,0 +1,26 @@
+# Maintainer: MJBogusz <mjbogusz.find.me.on.github@not.a.valid.email.address.com>
+pkgname=wiringpi-odroid
+pkgver=2.42
+pkgrel=1
+pkgdesc=""
+arch=('any')
+url="https://github.com/mjbogusz/wiringPi"
+license=('LGPL3')
+depends=('glibc')
+makedepends=('base-devel' 'cmake' 'git')
+provides=('wiringpi')
+conflicts=('wiringpi' 'wiringpi-git' 'wiringop-git')
+install=wiringpi-odroid
+source=("${pkgname}-${pkgver}::git+https://github.com/mjbogusz/wiringPi#v2.44")
+md5sums=('SKIP')
+
+build() {
+  cd "${pkgname}-${pkgver}/build"
+  cmake ../
+  make
+}
+
+package() {
+  cd "${pkgname}-${pkgver}/build"
+  make DESTDIR="$pkgdir/" install
+}

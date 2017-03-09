@@ -1,0 +1,10 @@
+post_install() {
+  set -e
+  /bin/chown root.root  /usr/bin/gpio
+  /bin/chmod 4755   /usr/bin/gpio
+  /sbin/ldconfig
+}
+
+post_remove() {
+  /sbin/ldconfig
+}
