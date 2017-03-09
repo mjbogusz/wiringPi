@@ -7,11 +7,11 @@ arch=('any')
 url="https://github.com/mjbogusz/wiringPi"
 license=('LGPL3')
 depends=('glibc')
-makedepends=('base-devel' 'cmake' 'git')
+makedepends=('cmake' 'git')
 provides=('wiringpi')
 conflicts=('wiringpi' 'wiringpi-git' 'wiringop-git')
-install=wiringpi-odroid
-source=("${pkgname}-${pkgver}::git+https://github.com/mjbogusz/wiringPi#v2.44")
+install=wiringpi-odroid.install
+source=("${pkgname}-${pkgver}::git+https://github.com/mjbogusz/wiringPi#tag=v${pkgver}")
 md5sums=('SKIP')
 
 build() {
