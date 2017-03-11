@@ -9,7 +9,7 @@ set (CMAKE_INSTALL_PREFIX /usr/)
 
 set (LIB_VERSION_MAJOR 2)
 set (LIB_VERSION_MINOR 42)
-set (LIB_VERSION_PATCH 1)
+set (LIB_VERSION_PATCH 2)
 set (LIB_VERSION ${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_PATCH})
 
 add_subdirectory (wiringPi)
@@ -18,4 +18,4 @@ add_subdirectory (gpio)
 add_subdirectory (wiringPiD)
 add_subdirectory (examples)
 
-include (CPack.cmake)
+include (CMakeCPack.cmake)

@@ -43,20 +43,51 @@ FILE(GLOB libwiringPi_header_files "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 FILE(GLOB libwiringPi_main_header_files "${CMAKE_CURRENT_SOURCE_DIR}/wiring*.h")
 
 add_library (wiringPi SHARED ${libwiringPi_source_files})
-set_target_properties(wiringPi PROPERTIES VERSION ${LIB_VERSION} SOVERSION ${LIB_VERSION_MAJOR})
-target_link_libraries (wiringPi LINK_PUBLIC pthread m rt crypt)
-target_include_directories (wiringPi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set_target_properties(wiringPi PROPERTIES
+  VERSION ${LIB_VERSION}
+  SOVERSION ${LIB_VERSION_MAJOR}
+)
+target_link_libraries (wiringPi LINK_PUBLIC
+  pthread
+  m
+  rt
+  crypt
+)
+target_include_directories (wiringPi PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<INSTALL_INTERFACE:>
+)
 
-install(TARGETS wiringPi
+install (TARGETS wiringPi
+  EXPORT wiringPiTargets
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
+  INCLUDES DESTINATION include
 )
-install(FILES
-  ${libwiringPi_main_header_files}
+install (FILES ${libwiringPi_main_header_files}
   DESTINATION include
 )
-install(FILES
-  ${libwiringPi_header_files}
+install (FILES ${libwiringPi_header_files}
   DESTINATION include/wiringPi
+)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/wiringPi/wiringPiConfigVersion.cmake"
+  VERSION ${LIB_VERSION}
+  COMPATIBILITY AnyNewerVersion
+)
+configure_file(../CMakeWiringPiConfig.cmake
+  "${CMAKE_CURRENT_BINARY_DIR}/wiringPi/wiringPiConfig.cmake"
+  COPYONLY
+)
+
+install (EXPORT wiringPiTargets
+  DESTINATION lib/cmake/wiringPi
+)
+install (FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/wiringPi/wiringPiConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/wiringPi/wiringPiConfigVersion.cmake"
+  DESTINATION lib/cmake/wiringPi
 )

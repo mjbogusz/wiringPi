@@ -1,6 +1,6 @@
 # Maintainer: MJBogusz <mjbogusz.find.me.on.github@not.a.valid.email.address.com>
 pkgname=wiringpi-odroid
-pkgver=2.42.1
+pkgver=2.42.2
 pkgrel=1
 pkgdesc="GPIO (I2C, SPI...) libraries for Raspberry Pi and Odroid boards"
 arch=('i686' 'x86_64' 'armv7h' 'aarch64')
